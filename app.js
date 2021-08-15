@@ -1,41 +1,48 @@
 'use strict';
 
 // Создаем AppData
-const DomElement = function (selector, height, width, bg, fontSize) {
+const DomElement = function (selector, height, width, bg, fontSize, position) {
    this.selector = selector;
    this.height = height;
    this.width = width;
    this.bg = bg;
    this.fontSize = fontSize;
+   this.position = position;
 
 };
 
-DomElement.prototype.newElement = (Class, text) => {
+DomElement.prototype.newElement = function () {
    let newDiv = document.createElement('div');
-   
-   if (Class[0] === '#') {
-      newDiv.id = Class.slice(1);
-   } else if (Class[0] === '.') {
-      newDiv.className = Class.slice(1);
+   if (this.selector[0] === '#') {
+      newDiv.id = this.selector.slice(1);
+   } else if (this.selector[0] === '.') {
+      newDiv.className = this.selector.slice(1);
    }
 
-   newDiv.style.cssText = `   height: ${Class.height}px;     
-                              width: ${Class.width}px;    
-                              background: #${Class.bg};    
-                              font-size: ${Class.fontSize}px; `;
-
-   newDiv.innerText = text;
-   console.log('newDiv: ', newDiv);
+   newDiv.style.cssText = `   height: ${this.height}px;     
+                              width: ${this.width}px;    
+                              background: #${this.bg};    
+                              font-size: ${this.fontSize}px;
+                              position: ${this.position}; 
+                              
+                           `;
 
    document.body.append(newDiv);
 };
 
-const domElement = new DomElement('.wex', 100, 300, 'd3f304', 24);
-const domElement2 = new DomElement('#wex', 100, 300, 'd3d3d3', 24);
+DomElement.prototype.keyPress = function (e) {
+   let elem = document.querySelector(this.selector);
+
+   switch (e.key) {
+      case "ArrowDown": elem.style.top = +elem.style.top.replace('px', '') + 10 + 'px'; break;
+      case "ArrowUp": elem.style.top = +elem.style.top.replace('px', '') - 10 + 'px'; break;
+      case "ArrowLeft": elem.style.left = +elem.style.left.replace('px', '') - 10 + 'px'; break;
+      case "ArrowRight": elem.style.left = +elem.style.left.replace('px', '') + 10 + 'px'; break;
+   }
+};
+
+let domElement = new DomElement('.wex', 100, 100, '7CFC00', 34, 'absolute');
 
 
-domElement.newElement(domElement, 'любой текст #1');
-domElement2.newElement(domElement2, 'любой текст #2');
-
-
-
+document.addEventListener("DOMContentLoaded", domElement.newElement());
+document.addEventListener("keydown", (e) => { domElement.keyPress(e); });
